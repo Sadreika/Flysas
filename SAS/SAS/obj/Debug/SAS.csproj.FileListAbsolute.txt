@@ -1,0 +1,10 @@
+C:\Users\mariu\Documents\GitHub\Flysas\SAS\SAS\bin\Debug\SAS.exe.config
+C:\Users\mariu\Documents\GitHub\Flysas\SAS\SAS\bin\Debug\SAS.exe
+C:\Users\mariu\Documents\GitHub\Flysas\SAS\SAS\bin\Debug\SAS.pdb
+C:\Users\mariu\Documents\GitHub\Flysas\SAS\SAS\bin\Debug\RestSharp.dll
+C:\Users\mariu\Documents\GitHub\Flysas\SAS\SAS\bin\Debug\RestSharp.xml
+C:\Users\mariu\Documents\GitHub\Flysas\SAS\SAS\obj\Debug\SAS.csprojAssemblyReference.cache
+C:\Users\mariu\Documents\GitHub\Flysas\SAS\SAS\obj\Debug\SAS.csproj.CoreCompileInputs.cache
+C:\Users\mariu\Documents\GitHub\Flysas\SAS\SAS\obj\Debug\SAS.csproj.CopyComplete
+C:\Users\mariu\Documents\GitHub\Flysas\SAS\SAS\obj\Debug\SAS.exe
+C:\Users\mariu\Documents\GitHub\Flysas\SAS\SAS\obj\Debug\SAS.pdb
