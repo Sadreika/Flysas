@@ -22,7 +22,7 @@ namespace SAS
             string[] javaScriptData = returnJavaScriptData(javaScriptUrlNumber).Split(',');
 
             javaScriptData[0] = javaScriptData[0].Remove(javaScriptData[0].Length - 1);
-            javaScriptData[1] = javaScriptData[1].Remove(javaScriptData[0].Length - 1);
+            javaScriptData[1] = javaScriptData[1].Remove(javaScriptData[1].Length - 1);
             javaScriptData[1] = javaScriptData[1].Remove(0, 13);
            
             loadingFlights(javaScriptUrlNumber, javaScriptData[0], javaScriptData[1]);
