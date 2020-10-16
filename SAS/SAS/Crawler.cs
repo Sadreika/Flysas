@@ -19,7 +19,13 @@ namespace SAS
         {
             firstPageLoad();
             string javaScriptUrlNumber = returnJavaScriptUrlNumber();
-            loadingFlights(javaScriptUrlNumber);
+            string[] javaScriptData = returnJavaScriptData(javaScriptUrlNumber).Split(',');
+
+            javaScriptData[0] = javaScriptData[0].Remove(javaScriptData[0].Length - 1);
+            javaScriptData[1] = javaScriptData[1].Remove(javaScriptData[0].Length - 1);
+            javaScriptData[1] = javaScriptData[1].Remove(0, 13);
+           
+            loadingFlights(javaScriptUrlNumber, javaScriptData[0], javaScriptData[1]);
         }
         private void firstPageLoad()
         {
@@ -70,16 +76,36 @@ namespace SAS
             MatchCollection match = regex.Matches(response.Content);
             return match[0].Value;
         }
-        private void loadingFlights(string urlNumber)
+        private string returnJavaScriptData(string urlNumber)
         {
-            RestClient client = new RestClient("https://book.flysas.com" + urlNumber + "?PID=AF288DBB-0842-3EDC-868A-79CE2F1E4EEB");
-            RestRequest request = new RestRequest("", Method.POST);
+            RestClient client = new RestClient("https://book.flysas.com" + urlNumber);
+            RestRequest request = new RestRequest("", Method.GET);
             client.AddDefaultHeader("Host", "book.flysas.com");
             client.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:81.0) Gecko/20100101 Firefox/81.0";
             client.AddDefaultHeader("Accept", "*/*");
             client.AddDefaultHeader("Accept-Language", "en-GB,en;q=0.5");
             client.AddDefaultHeader("Accept-Encoding", "gzip, deflate, br");
-            client.AddDefaultHeader("X-Distil-Ajax", "wefedsfzubfczyxvzby");
+            client.AddDefaultHeader("DNT", "1");
+            client.AddDefaultHeader("Connection", "keep-alive");
+            client.AddDefaultHeader("Referer", "https://book.flysas.com/pl/SASC/wds/Override.action?SO_SITE_EXT_PSPURL=https://classic.sas.dk/SASCredits/SASCreditsPaymentMaster.aspx&SO_SITE_TP_TPC_POST_EOT_WT=50000&SO_SITE_USE_ACK_URL_SERVICE=TRUE&WDS_URL_JSON_POINTS=ebwsprod.flysas.com%2FEAJI%2FEAJIService.aspx&SO_SITE_EBMS_API_SERVERURL=%20https%3A%2F%2F1aebwsprod.flysas.com%2FEBMSPointsInternal%2FEBMSPoints.asmx&WDS_SERVICING_FLOW_TE_SEATMAP=TRUE&WDS_SERVICING_FLOW_TE_XBAG=TRUE&WDS_SERVICING_FLOW_TE_MEAL=TRUE&WDS_MIN_REQ_MIL=500");
+
+            IRestResponse response = client.Execute(request);
+            string query = @"PID=[A-Z0-9-]+.,ajax_header:.[a-z]+.";
+            Regex regex = new Regex(query);
+            MatchCollection match = regex.Matches(response.Content);
+            return match[0].Value;
+        }
+        private void loadingFlights(string urlNumber, string urlJavaScriptData, string ajax)
+        {
+            RestClient client = new RestClient("https://book.flysas.com" + urlNumber + "?" + urlJavaScriptData);
+            RestRequest request = new RestRequest("", Method.POST);
+            // Headers
+            client.AddDefaultHeader("Host", "book.flysas.com");
+            client.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:81.0) Gecko/20100101 Firefox/81.0";
+            client.AddDefaultHeader("Accept", "*/*");
+            client.AddDefaultHeader("Accept-Language", "en-GB,en;q=0.5");
+            client.AddDefaultHeader("Accept-Encoding", "gzip, deflate, br");
+            client.AddDefaultHeader("X-Distil-Ajax", ajax);
             client.AddDefaultHeader("Content-Type", "text/plain;charset=UTF-8");
             client.AddDefaultHeader("Origin", "https://book.flysas.com");
             client.AddDefaultHeader("DNT", "1");
