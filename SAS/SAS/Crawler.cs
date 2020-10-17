@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using RestSharp;
@@ -18,15 +19,15 @@ namespace SAS
         {
 
         }
-        public Crawler(string dA, string aA, string cA, string dT, string aT, string cP, string tax)
+        public Crawler(string dA, string aA, string cA, string dT, string aT)
         {
             this.departureAirport = dA;
             this.arrivalAirport = aA;
             this.connectionAirport = cA;
             this.departureTime = dT;
             this.arrivalTime = aT;
-            this.cheapestPrice = cP;
-            this.taxes = tax;
+            //this.cheapestPrice = cP;
+            //this.taxes = tax;
         }
 
         private List<Crawler> collectedDataFromSaS = new List<Crawler>();
@@ -247,33 +248,36 @@ namespace SAS
             request.AddParameter("text/xml", requestQuery, ParameterType.RequestBody);
             IRestResponse response = client.Execute(request);
             //class="airport"> <span>[A-Z]+<\/span>
-            string queryForAirports = "class=\"airport\"> <span>[A-Z]+<\\/span>";
+            //location">[a-zA-Z]+
+            //string queryForAirports = "class=\"airport\"> <span>[A-Z]+<\\/span>";
+            string queryForAirports = "location\">[a-zA-Z]+";
             //class="time">\d+:\d+<
-            string queryForTimes = "class=\"time\">\\d+:\\d+<";
+            string queryForDepartureTimes = "class=\"time\">\\d+:\\d+<";
+            //class="time"> \d+:\d+
+            string queryForArrivalTimes = "class=\"time\"> \\d+:\\d+";
             //price':'[0-9]+.[0-9]+'
             string queryForPrices = "price':'[0-9]+.[0-9]+'";
             //tax':'[0-9]+.[0-9]+'
             string queryForTaxes = "tax':'[0-9]+.[0-9]+'";
 
             Regex airports = new Regex(queryForAirports);
-            Regex times = new Regex(queryForTimes);
+            Regex timeD = new Regex(queryForDepartureTimes);
+            Regex timeA = new Regex(queryForArrivalTimes);
             Regex prices = new Regex(queryForPrices);
             Regex taxes = new Regex(queryForTaxes);
 
             MatchCollection airportsmatch = airports.Matches(response.Content);
-            MatchCollection timesmatch = times.Matches(response.Content);
+            MatchCollection departureTimeMatch = timeD.Matches(response.Content);
+            MatchCollection arrivalTimeMatch = timeA.Matches(response.Content);
             MatchCollection pricesmatch = prices.Matches(response.Content);
             MatchCollection taxessmatch = taxes.Matches(response.Content);
 
-            creatingObjectAndAddingToList(airportsmatch, timesmatch, pricesmatch, taxessmatch);
+            creatingObjectAndAddingToList(airportsmatch, arrivalTimeMatch, departureTimeMatch, pricesmatch, taxessmatch);
         }
 
-        private void creatingObjectAndAddingToList(MatchCollection airportM, MatchCollection timeM, MatchCollection priceM, MatchCollection taxM)
+        private void creatingObjectAndAddingToList(MatchCollection airportM, MatchCollection timeAM, MatchCollection timeDM, MatchCollection priceM, MatchCollection taxM)
         {
-            for (int i = 0; i < airportM.Count; i = i + 2)
-            {
-
-            }
+            // Need to creat objects
         }
     }
 }
