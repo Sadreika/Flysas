@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Net;
+using System.Net.Http;
 using System.Text.RegularExpressions;
 using RestSharp;
 
@@ -61,7 +62,7 @@ namespace SAS
             client.AddDefaultHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
             client.AddDefaultHeader("Accept-Language", "en-GB,en;q=0.5");
             client.AddDefaultHeader("Accept-Encoding", "gzip, deflate, br");
-            client.AddDefaultHeader("Content-Type", "multipart/form-data; boundary=---------------------------33994240382562922193872950699");
+            //client.AddDefaultHeader("Content-Type", "multipart/form-data; boundary=---------------------------33994240382562922193872950699");
             client.AddDefaultHeader("Origin", "https://classic.flysas.com");
             client.AddDefaultHeader("DNT", "1");
             client.AddDefaultHeader("Connection", "keep-alive");
@@ -71,8 +72,18 @@ namespace SAS
             {
                 request.AddCookie(cookie.Name, cookie.Value);
             }
-            string requestQuery = buildingQuery("-----------------------------33994240382562922193872950699");
-            request.AddParameter("text/xml", requestQuery, ParameterType.RequestBody);
+
+            //TESTAVIMAS
+            request.AlwaysMultipartFormData = true;
+            request.
+            request.AddParameter("name=\"__EVENTTARGET\"", "ctl00$FullRegion$MainRegion$ContentRegion$ContentFullRegion$ContentLeftRegion$CEPGroup1$CEPActive$cepNDPRevBookingArea$Searchbtn$ButtonLink");
+            //request.AddParameter("text/xml", "name=\"__EVENTTARGET\"", ParameterType.RequestBody);
+            //request.AddParameter("text/xml", "value=\"ctl00$FullRegion$MainRegion$ContentRegion$ContentFullRegion$ContentLeftRegion$CEPGroup1$CEPActive$cepNDPRevBookingArea$Searchbtn$ButtonLink\"", ParameterType.RequestBody);
+            //request.AddParameter("text/xml", "name=\"ctl00$FullRegion$TopRegion$_siteHeader$hdnProfilingConsent\"", ParameterType.RequestBody);
+
+            //string requestQuery = buildingQuery("-----------------------------33994240382562922193872950699");
+            //request.AddParameter("text/xml", requestQuery, ParameterType.RequestBody);
+
             IRestResponse response = client.Execute(request);
         }
         private string buildingQuery(string boundary)
