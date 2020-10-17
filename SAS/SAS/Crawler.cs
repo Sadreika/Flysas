@@ -68,7 +68,6 @@ namespace SAS
             client.AddDefaultHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
             client.AddDefaultHeader("Accept-Language", "en-GB,en;q=0.5");
             client.AddDefaultHeader("Accept-Encoding", "gzip, deflate, br");
-            client.AddDefaultHeader("Upgrade-Insecure-Requests", "1");
             client.AddDefaultHeader("DNT", "1");
             client.AddDefaultHeader("Connection", "keep-alive");
             client.AddDefaultHeader("Upgrade-Insecure-Requests", "1");
