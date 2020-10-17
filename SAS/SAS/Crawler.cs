@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Text.RegularExpressions;
@@ -19,17 +20,20 @@ namespace SAS
         public void crawling()
         {
             firstPageLoad();
-            gettingENC();
-            //string javaScriptUrlNumber = returnJavaScriptUrlNumber();
-            
-            //string[] javaScriptData = returnJavaScriptData(javaScriptUrlNumber).Split(',');
 
-            //javaScriptData[0] = javaScriptData[0].Remove(javaScriptData[0].Length - 1);
-            //javaScriptData[1] = javaScriptData[1].Remove(javaScriptData[1].Length - 1);
-            //javaScriptData[1] = javaScriptData[1].Remove(0, 13);
+            string enc = gettingENC();
+            enc = enc.Trim('"');
+         
+            string javaScriptUrlNumber = returnJavaScriptUrlNumber(enc);
+            
+            string[] javaScriptData = returnJavaScriptData(javaScriptUrlNumber).Split(',');
+
+            javaScriptData[0] = javaScriptData[0].Remove(javaScriptData[0].Length - 1);
+            javaScriptData[1] = javaScriptData[1].Remove(javaScriptData[1].Length - 1);
+            javaScriptData[1] = javaScriptData[1].Remove(0, 13);
            
-            //loadingFlights(javaScriptUrlNumber, javaScriptData[0], javaScriptData[1]);
-            //reloadingFlights();
+            loadingFlights(javaScriptUrlNumber, javaScriptData[0], javaScriptData[1]);
+            reloadingFlights();
         }
         private void firstPageLoad()
         {
@@ -52,7 +56,7 @@ namespace SAS
             // Cookies
             addingCookiesToCookieList(response.Cookies);
         }
-        private void gettingENC()
+        private string gettingENC()
         {
             RestClient client = new RestClient("https://classic.flysas.com/en/de/");
             RestRequest request = new RestRequest("", Method.POST);
@@ -72,71 +76,56 @@ namespace SAS
             {
                 request.AddCookie(cookie.Name, cookie.Value);
             }
-
-            //TESTAVIMAS
-            request.AlwaysMultipartFormData = true;
-            request.
-            request.AddParameter("name=\"__EVENTTARGET\"", "ctl00$FullRegion$MainRegion$ContentRegion$ContentFullRegion$ContentLeftRegion$CEPGroup1$CEPActive$cepNDPRevBookingArea$Searchbtn$ButtonLink");
-            //request.AddParameter("text/xml", "name=\"__EVENTTARGET\"", ParameterType.RequestBody);
-            //request.AddParameter("text/xml", "value=\"ctl00$FullRegion$MainRegion$ContentRegion$ContentFullRegion$ContentLeftRegion$CEPGroup1$CEPActive$cepNDPRevBookingArea$Searchbtn$ButtonLink\"", ParameterType.RequestBody);
-            //request.AddParameter("text/xml", "name=\"ctl00$FullRegion$TopRegion$_siteHeader$hdnProfilingConsent\"", ParameterType.RequestBody);
-
-            //string requestQuery = buildingQuery("-----------------------------33994240382562922193872950699");
-            //request.AddParameter("text/xml", requestQuery, ParameterType.RequestBody);
-
+            request = buildingQuery(request);
             IRestResponse response = client.Execute(request);
+            string query = "\"ENC\".value=\"[0-9A-Z]+\"";
+            Regex regex = new Regex(query);
+            MatchCollection match = regex.Matches(response.Content);
+            string[] splittedData = match[0].Value.Split('=');
+            return splittedData[1];
         }
-        private string buildingQuery(string boundary)
+        private RestRequest buildingQuery(RestRequest request)
         {
-            string query = "";
-            string inFromOfquery = "Content-Disposition: form-data; ";
-            List<string> dataToInput = new List<string>();
-            dataToInput.Add("name=\"__EVENTTARGET\"\nctl00$FullRegion$MainRegion$ContentRegion$ContentFullRegion$ContentLeftRegion$CEPGroup1$CEPActive$cepNDPRevBookingArea$Searchbtn$ButtonLink");
-            dataToInput.Add("name=\"__EVENTARGUMENT\"");
-            dataToInput.Add("name=\"ctl00$FullRegion$TopRegion$_siteHeader$hdnProfilingConsent\"");
-            dataToInput.Add("name=\"ctl00$FullRegion$TopRegion$_siteHeader$hdnTermsConsent\"");
-            dataToInput.Add("name=\"ctl00$FullRegion$TopRegion$_siteHeader$_ssoLogin$MainFormBorderPanel$uid\"");
-            dataToInput.Add("name=\"ctl00$FullRegion$TopRegion$_siteHeader$_ssoLogin$MainFormBorderPanel$pwd\"");
-            dataToInput.Add("name=\"ctl00$FullRegion$TopRegion$_siteHeader$_ssoLogin$MainFormBorderPanel$hdnShowModal\"");
-            dataToInput.Add("name=\"ctl00$FullRegion$TopRegion$_siteHeader$_ssoLogin$MainFormBorderPanel$hdnIsEb0\"");
-            dataToInput.Add("name=\"ctl00$FullRegion$MainRegion$ContentRegion$ContentFullRegion$ContentLeftRegion$CEPGroup1$CEPActive$cepNDPRevBookingArea$ceptravelTypeSelector$TripTypeSelector\"\nroundtrip");
-            dataToInput.Add("name=\"ctl00$FullRegion$MainRegion$ContentRegion$ContentFullRegion$ContentLeftRegion$CEPGroup1$CEPActive$cepNDPRevBookingArea$predictiveSearch$hiddenIntercont\"\nFalse");
-            dataToInput.Add("name=\"ctl00$FullRegion$MainRegion$ContentRegion$ContentFullRegion$ContentLeftRegion$CEPGroup1$CEPActive$cepNDPRevBookingArea$predictiveSearch$hiddenDomestic\"\nSE,GB");
-            dataToInput.Add("name=\"ctl00$FullRegion$MainRegion$ContentRegion$ContentFullRegion$ContentLeftRegion$CEPGroup1$CEPActive$cepNDPRevBookingArea$predictiveSearch$hiddenFareType\"\nA");
-            dataToInput.Add("name=\"ctl00$FullRegion$MainRegion$ContentRegion$ContentFullRegion$ContentLeftRegion$CEPGroup1$CEPActive$cepNDPRevBookingArea$predictiveSearch$txtFrom\"\nStockholm, Sweden - Arlanda (ARN)");
-            dataToInput.Add("name=\"ctl00$FullRegion$MainRegion$ContentRegion$ContentFullRegion$ContentLeftRegion$CEPGroup1$CEPActive$cepNDPRevBookingArea$predictiveSearch$hiddenFrom\"\nARN");
-            dataToInput.Add("name=\"ctl00$FullRegion$MainRegion$ContentRegion$ContentFullRegion$ContentLeftRegion$CEPGroup1$CEPActive$cepNDPRevBookingArea$predictiveSearch$txtTo\"\nLondon, United Kingdom - Heathrow (LHR)");
-            dataToInput.Add("name=\"ctl00$FullRegion$MainRegion$ContentRegion$ContentFullRegion$ContentLeftRegion$CEPGroup1$CEPActive$cepNDPRevBookingArea$predictiveSearch$hiddenTo\"\nLHR");
-            dataToInput.Add("name=\"ctl00$FullRegion$MainRegion$ContentRegion$ContentFullRegion$ContentLeftRegion$CEPGroup1$CEPActive$cepNDPRevBookingArea$predictiveSearch$txtFromTOJ\"");
-            dataToInput.Add("name=\"ctl00$FullRegion$MainRegion$ContentRegion$ContentFullRegion$ContentLeftRegion$CEPGroup1$CEPActive$cepNDPRevBookingArea$predictiveSearch$hiddenFromTOJ\"");
-            dataToInput.Add("name=\"ctl00$FullRegion$MainRegion$ContentRegion$ContentFullRegion$ContentLeftRegion$CEPGroup1$CEPActive$cepNDPRevBookingArea$cepCalendar$hiddenOutbound\"\n2020-11-05");
-            dataToInput.Add("name=\"ctl00$FullRegion$MainRegion$ContentRegion$ContentFullRegion$ContentLeftRegion$CEPGroup1$CEPActive$cepNDPRevBookingArea$cepCalendar$hiddenReturn\"\n2020-11-12");
-            dataToInput.Add("name=\"ctl00$FullRegion$MainRegion$ContentRegion$ContentFullRegion$ContentLeftRegion$CEPGroup1$CEPActive$cepNDPRevBookingArea$cepCalendar$hdnSelectedOutboundMonth\"");
-            dataToInput.Add("name=\"ctl00$FullRegion$MainRegion$ContentRegion$ContentFullRegion$ContentLeftRegion$CEPGroup1$CEPActive$cepNDPRevBookingArea$cepCalendar$hdnSelectedReturnMonth\"");
-            dataToInput.Add("name=\"ctl00$FullRegion$MainRegion$ContentRegion$ContentFullRegion$ContentLeftRegion$CEPGroup1$CEPActive$cepNDPRevBookingArea$cepCalendar$hiddenReturnCalVisible\"");
-            dataToInput.Add("name=\"ctl00$FullRegion$MainRegion$ContentRegion$ContentFullRegion$ContentLeftRegion$CEPGroup1$CEPActive$cepNDPRevBookingArea$cepCalendar$hiddenStoreCalDates\"\nSat Oct 17 2020 00:00:00 GMT+0300 (Eastern European Summer Time),Sat Oct 17 2020 00:00:00 GMT+0300 (Eastern European Summer Time),Mon Oct 11 2021 00:00:00 GMT+0300 (Eastern European Summer Time)");
-            dataToInput.Add("name=\"ctl00$FullRegion$MainRegion$ContentRegion$ContentFullRegion$ContentLeftRegion$CEPGroup1$CEPActive$cepNDPRevBookingArea$cepCalendar$selectOutbound\"\n2020-10-01");
-            dataToInput.Add("name=\"ctl00$FullRegion$MainRegion$ContentRegion$ContentFullRegion$ContentLeftRegion$CEPGroup1$CEPActive$cepNDPRevBookingArea$cepCalendar$selectReturn\"\n2020-10-01");
-            dataToInput.Add("name=\"ctl00$FullRegion$MainRegion$ContentRegion$ContentFullRegion$ContentLeftRegion$CEPGroup1$CEPActive$cepNDPRevBookingArea$FlexDateSelector\"\nShow selected dates");
-            dataToInput.Add("name=\"ctl00$FullRegion$MainRegion$ContentRegion$ContentFullRegion$ContentLeftRegion$CEPGroup1$CEPActive$cepNDPRevBookingArea$cepPassengerTypes$passengerTypeAdult\"\n1");
-            dataToInput.Add("name=\"ctl00$FullRegion$MainRegion$ContentRegion$ContentFullRegion$ContentLeftRegion$CEPGroup1$CEPActive$cepNDPRevBookingArea$cepPassengerTypes$passengerTypeChild211\"\n0");
-            dataToInput.Add("name=\"ctl00$FullRegion$MainRegion$ContentRegion$ContentFullRegion$ContentLeftRegion$CEPGroup1$CEPActive$cepNDPRevBookingArea$cepPassengerTypes$passengerTypeInfant\"\n0");
-            dataToInput.Add("name=\"ctl00$FullRegion$MainRegion$ContentRegion$ContentFullRegion$ContentLeftRegion$CEPGroup1$CEPActive$cepNDPRevBookingArea$cepNdpFareTypeSelector$ddlFareTypeSelector\"\nA");
-            dataToInput.Add("name=\"ctl00$FullRegion$MainRegion$ContentRegion$ContentFullRegion$ContentLeftRegion$CEPGroup1$CEPActive$cepNDPRevBookingArea$hdnsetDefaultValue\"\ntrue");
-            dataToInput.Add("name=\"ctl00$FullRegion$MainRegion$ContentRegion$ContentFullRegion$ContentLeftRegion$CEPGroup1$CEPActive$cepNDPRevBookingArea$hdncalendarDropdown\"\ntrue");
-            dataToInput.Add("name=\"__PREVIOUSPAGE\"\n3aoIK5urOF6qLmjEUVWoe7Zlok_H7Ef8UkS2oCFR_Ccg24aQSIRhidbF3PGeuRmIFTuiGxx8ealPNKfgqBWh77mCC2k1");
-            dataToInput.Add("name=\"__VIEWSTATE\"");
-            dataToInput.Add("name=\"__VIEWSTATEGENERATOR\"\nCA0B0334");
-
-            foreach(string data in dataToInput)
-            {
-                query = query + boundary + "\n" + inFromOfquery + data + "\n";
-            }
-
-            query = query + boundary;
-            return query;
+            request.AlwaysMultipartFormData = true;
+            request.AddParameter("__EVENTTARGET", "ctl00$FullRegion$MainRegion$ContentRegion$ContentFullRegion$ContentLeftRegion$CEPGroup1$CEPActive$cepNDPRevBookingArea$Searchbtn$ButtonLink");
+            request.AddParameter("__EVENTARGUMENT", "");
+            request.AddParameter("ctl00$FullRegion$TopRegion$_siteHeader$hdnProfilingConsent", "");
+            request.AddParameter("ctl00$FullRegion$TopRegion$_siteHeader$hdnTermsConsent", "");
+            request.AddParameter("ctl00$FullRegion$TopRegion$_siteHeader$_ssoLogin$MainFormBorderPanel$uid", "");
+            request.AddParameter("ctl00$FullRegion$TopRegion$_siteHeader$_ssoLogin$MainFormBorderPanel$pwd", "");
+            request.AddParameter("ctl00$FullRegion$TopRegion$_siteHeader$_ssoLogin$MainFormBorderPanel$hdnShowModal", "");
+            request.AddParameter("ctl00$FullRegion$TopRegion$_siteHeader$_ssoLogin$MainFormBorderPanel$hdnIsEb0", "");
+            request.AddParameter("ctl00$FullRegion$MainRegion$ContentRegion$ContentFullRegion$ContentLeftRegion$CEPGroup1$CEPActive$cepNDPRevBookingArea$ceptravelTypeSelector$TripTypeSelector", "roundtrip");
+            request.AddParameter("ctl00$FullRegion$MainRegion$ContentRegion$ContentFullRegion$ContentLeftRegion$CEPGroup1$CEPActive$cepNDPRevBookingArea$predictiveSearch$hiddenIntercont", "False");
+            request.AddParameter("ctl00$FullRegion$MainRegion$ContentRegion$ContentFullRegion$ContentLeftRegion$CEPGroup1$CEPActive$cepNDPRevBookingArea$predictiveSearch$hiddenDomestic","SE,GB");
+            request.AddParameter("ctl00$FullRegion$MainRegion$ContentRegion$ContentFullRegion$ContentLeftRegion$CEPGroup1$CEPActive$cepNDPRevBookingArea$predictiveSearch$hiddenFareType", "A");
+            request.AddParameter("ctl00$FullRegion$MainRegion$ContentRegion$ContentFullRegion$ContentLeftRegion$CEPGroup1$CEPActive$cepNDPRevBookingArea$predictiveSearch$txtFrom", "Stockholm, Sweden - Arlanda (ARN)");
+            request.AddParameter("ctl00$FullRegion$MainRegion$ContentRegion$ContentFullRegion$ContentLeftRegion$CEPGroup1$CEPActive$cepNDPRevBookingArea$predictiveSearch$hiddenFrom", "ARN");
+            request.AddParameter("ctl00$FullRegion$MainRegion$ContentRegion$ContentFullRegion$ContentLeftRegion$CEPGroup1$CEPActive$cepNDPRevBookingArea$predictiveSearch$txtTo", "London, United Kingdom - Heathrow (LHR)");
+            request.AddParameter("ctl00$FullRegion$MainRegion$ContentRegion$ContentFullRegion$ContentLeftRegion$CEPGroup1$CEPActive$cepNDPRevBookingArea$predictiveSearch$hiddenTo", "LHR");
+            request.AddParameter("ctl00$FullRegion$MainRegion$ContentRegion$ContentFullRegion$ContentLeftRegion$CEPGroup1$CEPActive$cepNDPRevBookingArea$predictiveSearch$txtFromTOJ", "");
+            request.AddParameter("ctl00$FullRegion$MainRegion$ContentRegion$ContentFullRegion$ContentLeftRegion$CEPGroup1$CEPActive$cepNDPRevBookingArea$predictiveSearch$hiddenFromTOJ", "");
+            request.AddParameter("ctl00$FullRegion$MainRegion$ContentRegion$ContentFullRegion$ContentLeftRegion$CEPGroup1$CEPActive$cepNDPRevBookingArea$cepCalendar$hiddenOutbound", "2020-11-05");
+            request.AddParameter("ctl00$FullRegion$MainRegion$ContentRegion$ContentFullRegion$ContentLeftRegion$CEPGroup1$CEPActive$cepNDPRevBookingArea$cepCalendar$hiddenReturn", "2020-11-12");
+            request.AddParameter("ctl00$FullRegion$MainRegion$ContentRegion$ContentFullRegion$ContentLeftRegion$CEPGroup1$CEPActive$cepNDPRevBookingArea$cepCalendar$hdnSelectedOutboundMonth", "");
+            request.AddParameter("ctl00$FullRegion$MainRegion$ContentRegion$ContentFullRegion$ContentLeftRegion$CEPGroup1$CEPActive$cepNDPRevBookingArea$cepCalendar$hdnSelectedReturnMonth", "");
+            request.AddParameter("ctl00$FullRegion$MainRegion$ContentRegion$ContentFullRegion$ContentLeftRegion$CEPGroup1$CEPActive$cepNDPRevBookingArea$cepCalendar$hiddenReturnCalVisible", "");
+            request.AddParameter("ctl00$FullRegion$MainRegion$ContentRegion$ContentFullRegion$ContentLeftRegion$CEPGroup1$CEPActive$cepNDPRevBookingArea$cepCalendar$hiddenStoreCalDates", "Sat Oct 17 2020 00:00:00 GMT+0300 (Eastern European Summer Time),Sat Oct 17 2020 00:00:00 GMT+0300 (Eastern European Summer Time),Mon Oct 11 2021 00:00:00 GMT+0300 (Eastern European Summer Time)");
+            request.AddParameter("ctl00$FullRegion$MainRegion$ContentRegion$ContentFullRegion$ContentLeftRegion$CEPGroup1$CEPActive$cepNDPRevBookingArea$cepCalendar$selectOutbound", "2020-10-01");
+            request.AddParameter("ctl00$FullRegion$MainRegion$ContentRegion$ContentFullRegion$ContentLeftRegion$CEPGroup1$CEPActive$cepNDPRevBookingArea$cepCalendar$selectReturn", "2020-10-01");
+            request.AddParameter("ctl00$FullRegion$MainRegion$ContentRegion$ContentFullRegion$ContentLeftRegion$CEPGroup1$CEPActive$cepNDPRevBookingArea$FlexDateSelector", "Show selected dates");
+            request.AddParameter("ctl00$FullRegion$MainRegion$ContentRegion$ContentFullRegion$ContentLeftRegion$CEPGroup1$CEPActive$cepNDPRevBookingArea$cepPassengerTypes$passengerTypeAdult", "1");
+            request.AddParameter("ctl00$FullRegion$MainRegion$ContentRegion$ContentFullRegion$ContentLeftRegion$CEPGroup1$CEPActive$cepNDPRevBookingArea$cepPassengerTypes$passengerTypeChild211", "0");
+            request.AddParameter("ctl00$FullRegion$MainRegion$ContentRegion$ContentFullRegion$ContentLeftRegion$CEPGroup1$CEPActive$cepNDPRevBookingArea$cepPassengerTypes$passengerTypeInfant", "0");
+            request.AddParameter("ctl00$FullRegion$MainRegion$ContentRegion$ContentFullRegion$ContentLeftRegion$CEPGroup1$CEPActive$cepNDPRevBookingArea$cepNdpFareTypeSelector$ddlFareTypeSelector", "A");
+            request.AddParameter("ctl00$FullRegion$MainRegion$ContentRegion$ContentFullRegion$ContentLeftRegion$CEPGroup1$CEPActive$cepNDPRevBookingArea$hdnsetDefaultValue", "true");
+            request.AddParameter("ctl00$FullRegion$MainRegion$ContentRegion$ContentFullRegion$ContentLeftRegion$CEPGroup1$CEPActive$cepNDPRevBookingArea$hdncalendarDropdown", "true");
+            request.AddParameter("__PREVIOUSPAGE", "3aoIK5urOF6qLmjEUVWoe7Zlok_H7Ef8UkS2oCFR_Ccg24aQSIRhidbF3PGeuRmIFTuiGxx8ealPNKfgqBWh77mCC2k1");
+            request.AddParameter("__VIEWSTATE", "");
+            request.AddParameter("__VIEWSTATEGENERATOR", "CA0B0334");
+            return request;
         }
-        private string returnJavaScriptUrlNumber()
+        private string returnJavaScriptUrlNumber(string enc)
         {
             // Url and method
             RestClient client = new RestClient("https://book.flysas.com/pl/SASC/wds/Override.action?SO_SITE_EXT_PSPURL=https://classic.sas.dk/SASCredits/SASCreditsPaymentMaster.aspx&SO_SITE_TP_TPC_POST_EOT_WT=50000&SO_SITE_USE_ACK_URL_SERVICE=TRUE&WDS_URL_JSON_POINTS=ebwsprod.flysas.com%2FEAJI%2FEAJIService.aspx&SO_SITE_EBMS_API_SERVERURL=%20https%3A%2F%2F1aebwsprod.flysas.com%2FEBMSPointsInternal%2FEBMSPoints.asmx&WDS_SERVICING_FLOW_TE_SEATMAP=TRUE&WDS_SERVICING_FLOW_TE_XBAG=TRUE&WDS_SERVICING_FLOW_TE_MEAL=TRUE&WDS_MIN_REQ_MIL=500");
