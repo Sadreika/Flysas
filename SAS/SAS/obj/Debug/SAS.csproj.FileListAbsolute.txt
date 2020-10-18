@@ -8,3 +8,6 @@ C:\Users\mariu\Documents\GitHub\Flysas\SAS\SAS\obj\Debug\SAS.csproj.CoreCompileI
 C:\Users\mariu\Documents\GitHub\Flysas\SAS\SAS\obj\Debug\SAS.csproj.CopyComplete
 C:\Users\mariu\Documents\GitHub\Flysas\SAS\SAS\obj\Debug\SAS.exe
 C:\Users\mariu\Documents\GitHub\Flysas\SAS\SAS\obj\Debug\SAS.pdb
+C:\Users\mariu\Documents\GitHub\Flysas\SAS\SAS\bin\Debug\HtmlAgilityPack.dll
+C:\Users\mariu\Documents\GitHub\Flysas\SAS\SAS\bin\Debug\HtmlAgilityPack.pdb
+C:\Users\mariu\Documents\GitHub\Flysas\SAS\SAS\bin\Debug\HtmlAgilityPack.xml

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
+using HtmlAgilityPack;
 using RestSharp;
 
 namespace SAS
@@ -57,6 +59,18 @@ namespace SAS
            
             loadingFlights(javaScriptUrlNumber, javaScriptData[0], javaScriptData[1]);
             reloadingFlights(enc);
+
+            showingList();
+        }
+        private void showingList()
+        {
+            foreach(Crawler flight in collectedDataFromSaS)
+            {
+                Console.WriteLine(flight.departureAirport + "\t" + flight.arrivalAirport + "\t" +
+                    flight.connectionAirport + "\t" + flight.departureTime + "\t" +
+                    flight.arrivalTime + "\t" + flight.cheapestPrice + "\t" +
+                    flight.taxes);
+            }
         }
         private void firstPageLoad()
         {
@@ -246,37 +260,123 @@ namespace SAS
             string requestQuery = "__EVENTTARGET=btnSubmitAmadeus&__EVENTARGUMENT=&LANGUAGE=GB&SITE=SKBKSKBK&EMBEDDED_TRANSACTION=FlexPricerAvailability&SIP_INTERNAL=44454641554C545F4E44505F4345505F49443D32313230383826504152414D455445525F434845434B53554D3D3633264345505F49443D3231353436312652454449524543545F55524C3D25326664656661756C742E617370782533666964253364383531372532366570736C616E6775616765253364656E265354415254504147455F49443D38353137264D41524B45543D4445265245565F5744535F4F42464545533D253363253366786D6C2B76657273696F6E25336427312E30272B656E636F64696E672533642769736F2D383835392D3127253366253365253363534F5F474C253365253363474C4F42414C5F4C4953542533652533634E414D45253365534954455F4C4953545F4F425F4645455F434F44455F544F5F4558454D50542533632532664E414D452533652533634C4953545F454C454D454E54253365253363434F4445253365543031253363253266434F44452533652533634C4953545F56414C55452533655430312533632532664C4953545F56414C55452533652533632532664C4953545F454C454D454E542533652533634C4953545F454C454D454E54253365253363434F4445253365543032253363253266434F44452533652533634C4953545F56414C55452533655430322533632532664C4953545F56414C55452533652533632532664C4953545F454C454D454E54253365253363253266474C4F42414C5F4C495354253365253363253266534F5F474C253365265245565F494E535552414E43453D253363253366786D6C2B76657273696F6E253364253232312E302532322B656E636F64696E6725336425323269736F2D383835392D31253232253366253365253363534F5F474C253365253363474C4F42414C5F4C4953542533652533634E414D45253365534954455F494E535552414E43455F50524F44554354532533632532664E414D452533652533634C4953545F454C454D454E54253365253363434F4445253365454154253363253266434F44452533652533634C4953545F56414C5545253365253363494E535552414E43455F434F44452533652533634555524F50455F4F57253365434F57452533632532664555524F50455F4F572533652533634555524F50455F5254253365435254452533632532664555524F50455F5254253365253363494E544552434F4E545F4F57253365434F5757253363253266494E544552434F4E545F4F57253365253363494E544552434F4E545F525425336543525457253363253266494E544552434F4E545F5254253365253363253266494E535552414E43455F434F44452533652533632532664C4953545F56414C55452533652533634C4953545F56414C55452533652533632532664C4953545F56414C55452533652533634C4953545F56414C55452533654E2533632532664C4953545F56414C55452533652533634C4953545F56414C55452533654E2533632532664C4953545F56414C55452533652533634C4953545F56414C55452533654E2533632532664C4953545F56414C55452533652533634C4953545F56414C55452533654E2533632532664C4953545F56414C55452533652533634C4953545F56414C5545253365312533632532664C4953545F56414C55452533652533632532664C4953545F454C454D454E54253365253363253266474C4F42414C5F4C495354253365253363253266534F5F474C253365&WDS_FLOW=REVENUE&WDS_FACADE_CALLBACK=https%3A%2F%2Fclassic.flysas.com%2FAmadeusFacade%2Fdefault.aspx%3Fepslanguage%3Den&SO_SITE_ATC_ALLOW_LSA_INDIC=TRUE&SO_SITE_ADVANCED_CATEGORIES=TRUE&SO_SITE_TK_OFFICE_ID=FRASK08RV&SO_SITE_QUEUE_OFFICE_ID=FRASK08RV&SO_SITE_CSSR_TAXES=FALSE&SO_SITE_OFFICE_ID=FRASK08RV&SO_SITE_ETKT_Q_AND_CAT=32C0&SO_SITE_FP_CAL_DISP_NA_DATE=TRUE&SO_SITE_ETKT_Q_OFFICE_ID=FRASK08RV&SO_GL=%3CSO_GL%3E%3CGLOBAL_LIST%3E%3CNAME%3ESITE_INSURANCE_PRODUCTS%3C%2FNAME%3E%3CLIST_ELEMENT%3E%3CCODE%3EEAT%3C%2FCODE%3E%3CLIST_VALUE%3ECRTE%3C%2FLIST_VALUE%3E%3CLIST_VALUE%3E%3C%2FLIST_VALUE%3E%3CLIST_VALUE%3EN%3C%2FLIST_VALUE%3E%3CLIST_VALUE%3EN%3C%2FLIST_VALUE%3E%3CLIST_VALUE%3EN%3C%2FLIST_VALUE%3E%3CLIST_VALUE%3EN%3C%2FLIST_VALUE%3E%3CLIST_VALUE%3E1%3C%2FLIST_VALUE%3E%3C%2FLIST_ELEMENT%3E%3C%2FGLOBAL_LIST%3E%3CGLOBAL_LIST%3E%3CNAME%3ESITE_QUEUE_DEFINITION_LIST%3C%2FNAME%3E%3CLIST_ELEMENT%3E%3CCODE%3E0%3C%2FCODE%3E%3CLIST_VALUE%3ESRV%3C%2FLIST_VALUE%3E%3CLIST_VALUE%3EFRASK08RV%3C%2FLIST_VALUE%3E%3CLIST_VALUE%3E34%3C%2FLIST_VALUE%3E%3CLIST_VALUE%3E0%3C%2FLIST_VALUE%3E%3C%2FLIST_ELEMENT%3E%3CLIST_ELEMENT%3E%3CCODE%3E1%3C%2FCODE%3E%3CLIST_VALUE%3ECAN%3C%2FLIST_VALUE%3E%3CLIST_VALUE%3EFRASK08RV%3C%2FLIST_VALUE%3E%3CLIST_VALUE%3E31%3C%2FLIST_VALUE%3E%3CLIST_VALUE%3E0%3C%2FLIST_VALUE%3E%3C%2FLIST_ELEMENT%3E%3CLIST_ELEMENT%3E%3CCODE%3E2%3C%2FCODE%3E%3CLIST_VALUE%3ERIR%3C%2FLIST_VALUE%3E%3CLIST_VALUE%3EFRASK08RV%3C%2FLIST_VALUE%3E%3CLIST_VALUE%3E30%3C%2FLIST_VALUE%3E%3CLIST_VALUE%3E0%3C%2FLIST_VALUE%3E%3C%2FLIST_ELEMENT%3E%3CLIST_ELEMENT%3E%3CCODE%3E3%3C%2FCODE%3E%3CLIST_VALUE%3EREI%3C%2FLIST_VALUE%3E%3CLIST_VALUE%3EFRASK08RV%3C%2FLIST_VALUE%3E%3CLIST_VALUE%3E30%3C%2FLIST_VALUE%3E%3CLIST_VALUE%3E0%3C%2FLIST_VALUE%3E%3C%2FLIST_ELEMENT%3E%3CLIST_ELEMENT%3E%3CCODE%3E4%3C%2FCODE%3E%3CLIST_VALUE%3EAWA%3C%2FLIST_VALUE%3E%3CLIST_VALUE%3EFRASK08RV%3C%2FLIST_VALUE%3E%3CLIST_VALUE%3E8%3C%2FLIST_VALUE%3E%3CLIST_VALUE%3E1%3C%2FLIST_VALUE%3E%3C%2FLIST_ELEMENT%3E%3CLIST_ELEMENT%3E%3CCODE%3E6%3C%2FCODE%3E%3CLIST_VALUE%3ERIP%3C%2FLIST_VALUE%3E%3CLIST_VALUE%3EFRASK08RV%3C%2FLIST_VALUE%3E%3CLIST_VALUE%3E30%3C%2FLIST_VALUE%3E%3CLIST_VALUE%3E0%3C%2FLIST_VALUE%3E%3C%2FLIST_ELEMENT%3E%3C%2FGLOBAL_LIST%3E%3CGLOBAL_LIST%3E%3CNAME%3ESITE_LIST_OB_FEE_CODE_TO_EXEMPT%3C%2FNAME%3E%3CLIST_ELEMENT%3E%3CCODE%3ET01%3C%2FCODE%3E%3CLIST_VALUE%3ET01%3C%2FLIST_VALUE%3E%3C%2FLIST_ELEMENT%3E%3CLIST_ELEMENT%3E%3CCODE%3ET02%3C%2FCODE%3E%3CLIST_VALUE%3ET02%3C%2FLIST_VALUE%3E%3C%2FLIST_ELEMENT%3E%3C%2FGLOBAL_LIST%3E%3C%2FSO_GL%3E&SO_SITE_FD_SOLDOUT_FLIGHT=TRUE&SO_SITE_QUEUE_CATEGORY=8C50&SO_SITE_ALLOW_LSA_INDICATOR=TRUE&WDS_SERVICING_FLOW_TE_MEAL=TRUE&WDS_AVD_SEL_FLIGHTS=TRUE&WDS_CAL_RANGE=15&WDS_SERVICING_FLOW_TE_FBAG=TRUE&WDS_SHOW_INVINFO=FALSE&WDS_BOOKING_FLOW_TE_MEAL=TRUE&WDS_ACTIVATE_APP_FOR_CC_MOP=TRUE&PRICING_TYPE=C&WDS_SHOW_TAXES=TRUE&B_LOCATION_1=ARN&WDS_FO_IATA=23494925&WDS_SHOW_ADDCAL=TRUE&WDS_INST_LIST=SAScDE%3Bklarna-SAScDE%3Bklarna_nt&WDS_USE_FQN=TRUE&WDS_ACTIVATE_APP_FOR_ALL_MOP=FALSE&COMMERCIAL_FARE_FAMILY_1=SKSTDA&WDS_CHECKIN_NOTIF=FALSE&TRIP_TYPE=R&WDS_HELPCONTACTURL=http%3A%2F%2Fclassic.sas.se%2Fen%2Fmisc%2FArkiv%2Fcontact-sia-%2F&WDS_SAS_CREDITS=TRUE&WDS_ANCILLARIES=FALSE&WDS_BOOKING_FLOW_TE_FBAG=TRUE&WDS_CC_LIST=AX-SAS%2FERETAIL_DE-true%3ACA-SAS%2FERETAIL_DE-true%3AVI-SAS%2FERETAIL_DE-true%3ADC-SAS%2FERETAIL_DE-false%3ADS-SAS%2FERETAIL_DE-true%3ATP-SAS%2FERETAIL_DE-false&WDS_SASCPCTRANGE=2-6&WDS_SHOW_AB=TRUE&WDS_FOID_EXCL_LIST=DK&DATE_RANGE_VALUE_1=1&WDS_SERVICING_FLOW_TE_SEATMAP=TRUE&DATE_RANGE_VALUE_2=1&WDS_BOOKING_FLOW_TE_XBAG=TRUE&WDS_POINTS_EARNED=FALSE&WDS_ORIGIN_SITE=DE&WDS_SHOW_CMP_CODE=TRUE&TRAVELLER_TYPE_1=ADT&WDS_NEWSLETTER_FCO=FALSE&B_LOCATION_2=LHR&WDS_BOOKING_FLOW_TE_SEATMAP=TRUE&WDS_TIME_OPTION=True&WDS_FRAS=TRUE&DISPLAY_TYPE=2&WDS_MOBILE_NEW_DESIGN=TRUE&WDS_SERVICING_FLOW_TE_XBAG=TRUE&WDS_SHOW_MINISEARCH=LINK&B_DATE_1=202011050000&B_DATE_2=202011120000&E_LOCATION_2=ARN&E_LOCATION_1=LHR&WDS_EBMS_CAMPAIGN=TRUE&DATE_RANGE_QUALIFIER_2=C&DATE_RANGE_QUALIFIER_1=C&WDS_INSTPAY=TRUE&ENCT=1&ENC=" + enc + "&__PREVIOUSPAGE=EOuVgEVGcPaooWlcQzY7uwfysikykaVpb-H5wZ3xp_fcVkbM_4Y3Yh3_OEwpzEWi5gOj_s80sjeP-1yYWe-Fp-6rsY8xAKiOA8--sL0aS3jICz0W0&__VIEWSTATE=%2FwEPDwUKMTE1MTc0MDk0N2RkuN2qfxyKJHLW%2BuU0D7%2BB8ZTdGMU%3D&__VIEWSTATEGENERATOR=BAA3076B";
             request.AddParameter("text/xml", requestQuery, ParameterType.RequestBody);
             IRestResponse response = client.Execute(request);
-            //class="airport"> <span>[A-Z]+<\/span>
-            //location">[a-zA-Z]+
-            //string queryForAirports = "class=\"airport\"> <span>[A-Z]+<\\/span>";
+
             string queryForAirports = "location\">[a-zA-Z]+";
-            //class="time">\d+:\d+<
             string queryForDepartureTimes = "class=\"time\">\\d+:\\d+<";
-            //class="time"> \d+:\d+
             string queryForArrivalTimes = "class=\"time\"> \\d+:\\d+";
-            //price':'[0-9]+.[0-9]+'
             string queryForPrices = "price':'[0-9]+.[0-9]+'";
-            //tax':'[0-9]+.[0-9]+'
             string queryForTaxes = "tax':'[0-9]+.[0-9]+'";
+            //string queryForRow = "'recoHidden_\\d_\\d_[A-Z]+";
+            string queryForRowAndPrice = "#price_\\d_\\d_[A-Z]+'..attr.'data-price','\\d+.\\d+";
 
             Regex airports = new Regex(queryForAirports);
             Regex timeD = new Regex(queryForDepartureTimes);
             Regex timeA = new Regex(queryForArrivalTimes);
             Regex prices = new Regex(queryForPrices);
             Regex taxes = new Regex(queryForTaxes);
+            //Regex row = new Regex(queryForRow);
+            Regex rowAndPrice = new Regex(queryForRowAndPrice);
 
             MatchCollection airportsmatch = airports.Matches(response.Content);
             MatchCollection departureTimeMatch = timeD.Matches(response.Content);
             MatchCollection arrivalTimeMatch = timeA.Matches(response.Content);
             MatchCollection pricesmatch = prices.Matches(response.Content);
             MatchCollection taxessmatch = taxes.Matches(response.Content);
+            //MatchCollection rowMatch = row.Matches(response.Content);
+            MatchCollection rowAndPriceMatch = rowAndPrice.Matches(response.Content);
 
-            creatingObjectAndAddingToList(airportsmatch, arrivalTimeMatch, departureTimeMatch, pricesmatch, taxessmatch);
+            creatingObjectAndAddingToList(airportsmatch, arrivalTimeMatch, departureTimeMatch, pricesmatch, taxessmatch, rowAndPriceMatch);
         }
 
-        private void creatingObjectAndAddingToList(MatchCollection airportM, MatchCollection timeAM, MatchCollection timeDM, MatchCollection priceM, MatchCollection taxM)
+        private void creatingObjectAndAddingToList(MatchCollection airportsmatch, MatchCollection arrivalTimeMatch, MatchCollection departureTimeMatch,
+            MatchCollection pricesmatch, MatchCollection taxessmatch, MatchCollection rowAndPriceMatch)
         {
-            // Need to creat objects
+            List<Crawler> collectedAndSortedData = new List<Crawler>();
+            for (int i = 0; i < airportsmatch.Count; i = i + 4)
+            {
+                Crawler crawler = new Crawler();
+                if (airportsmatch[i + 1].Value.Contains("Stockholm") || airportsmatch[i + 1].Value.Contains("London"))
+                {
+                    crawler.departureAirport = airportsmatch[i].Value;
+                    crawler.arrivalAirport = airportsmatch[i + 1].Value;
+                    crawler.connectionAirport = "";
+                }
+                else
+                {
+                    crawler.departureAirport = airportsmatch[i].Value;
+                    crawler.arrivalAirport = airportsmatch[i + 1].Value;
+                    crawler.connectionAirport = airportsmatch[i + 2].Value;
+                }
+                collectedAndSortedData.Add(crawler);
+            }
+
+            int j = 0;
+            for (int i = 0; i < departureTimeMatch.Count; i++)
+            {
+                if (collectedAndSortedData[j].connectionAirport.Equals(""))
+                {
+                    collectedAndSortedData[j].departureTime = departureTimeMatch[i].Value;
+                    i = i + 1;
+                }
+                else
+                {
+                    collectedAndSortedData[j].departureTime = departureTimeMatch[i].Value + ":" + departureTimeMatch[i + 3] + ", " + departureTimeMatch[i + 4] + ":" + departureTimeMatch[i + 5];
+                    i = i + 5;
+                }
+                j = j + 1;
+            }
+          
+            for(int i = 0; i < arrivalTimeMatch.Count; i++)
+            {
+                collectedAndSortedData[i].arrivalTime = arrivalTimeMatch[i].Value;
+            }
+
+            List<string> cheapestPrices = new List<string>();
+            for(int i = 0; i < rowAndPriceMatch.Count; i++)
+            {
+                if(rowAndPriceMatch[i].Value.Contains("ECONBG"))
+                {
+                     cheapestPrices.Add(rowAndPriceMatch[i].Value);
+                }
+            }
+            cheapestPrices = cheapestPrices.OrderBy(q => q).ToList();
+
+            for(int i = 0; i < collectedAndSortedData.Count; i++)
+            {
+                // Need to fix: empty price slot problem
+                if(i == 0)
+                {
+                    collectedAndSortedData[i].cheapestPrice = cheapestPrices[i];
+                }
+                else if(i == 1)
+                {
+                    collectedAndSortedData[i].cheapestPrice = "Empty";
+                }
+                else
+                {
+                    collectedAndSortedData[i].cheapestPrice = cheapestPrices[i - 1];
+                }
+            }
+            string value = "";
+            List<string> prices = new List<string>();
+            for(int i = 0; i < pricesmatch.Count; i++)
+            {
+                value = pricesmatch[i].Value.Replace("price"," ");
+                value = value.Trim(new Char[] { ' ', ':', '\''});
+                prices.Add(value);
+            }
+
+            for(int i = 0; i < collectedAndSortedData.Count; i++)
+            {
+                for(j = 0; j < prices.Count; j++)
+                {
+                    if(collectedAndSortedData[i].cheapestPrice.Contains(prices[j]))
+                    {
+                        collectedAndSortedData[i].taxes = taxessmatch[j].Value;
+                    }
+                }
+            }
+            collectedDataFromSaS = collectedAndSortedData;
         }
     }
 }
